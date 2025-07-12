@@ -1,0 +1,10 @@
+[general]
+name=PluginIdentificadorIlicitos
+qgisMinimumVersion=3.16
+version=0.1
+author=Matheus Alves Silva, Reginaldo Pereira da Silva Filho
+email=reginaldo.silva@ime.eb.br, matheus.silva@ime.eb.br
+description=Identificador de garimpo, dragas e pistas de pouso na Amazônia via IA
+about=Plugin desenvolvido durante a Operação Ricardo Franco 2024
+category=Analysis
+icon=icon-orf-resized.png
