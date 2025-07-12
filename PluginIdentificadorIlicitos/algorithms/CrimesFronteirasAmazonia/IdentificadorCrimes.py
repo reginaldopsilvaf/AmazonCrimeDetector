@@ -51,8 +51,8 @@ class IdentificadorCrimesFronteiras(QgsProcessingAlgorithm):
     INPUT_RASTER = "INPUT_RASTER"
     INPUT_FILE = "INPUT_FILE"
     OUTPUT_RASTER = "OUTPUT_RASTER"
-    CROP_SIZE = 'CROP_SIZE'
-    THRESHOLD = 'THRESHOLD'
+    # CROP_SIZE = 'CROP_SIZE'
+    # THRESHOLD = 'THRESHOLD'
 
     def initAlgorithm(self, config=None):
         # Adiciona o raster de entrada
@@ -68,7 +68,7 @@ class IdentificadorCrimesFronteiras(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFile(
                 self.INPUT_FILE,
-                "Arquivo do Modelo de IA",
+                "Pesos do Modelo de IA treinado",
                 behavior=QgsProcessingParameterFile.Folder,
                 fileFilter="All Files (*)"
             )
@@ -82,28 +82,28 @@ class IdentificadorCrimesFronteiras(QgsProcessingAlgorithm):
             )
         )
 
-        self.addParameter(
-            QgsProcessingParameterNumber(
-                self.CROP_SIZE,
-                "Tamanho do patch",
-                defaultValue=128
-            )
-        )
+        # self.addParameter(
+        #     QgsProcessingParameterNumber(
+        #         self.CROP_SIZE,
+        #         "Tamanho do patch",
+        #         defaultValue=128
+        #     )
+        # )
 
-        self.addParameter(
-            QgsProcessingParameterString(
-                self.THRESHOLD,
-                "Limiar de predição (0 a 1)",
-                defaultValue=1
-            )
-        )
+        # self.addParameter(
+        #     QgsProcessingParameterString(
+        #         self.THRESHOLD,
+        #         "Limiar de predição (0 a 1)",
+        #         defaultValue=1
+        #     )
+        # )
 
     def processAlgorithm(self, parameters, context, feedback):
         img = self.parameterAsRasterLayer(parameters, self.INPUT_RASTER, context).dataProvider().dataSourceUri()
         modelo = self.parameterAsFile(parameters, self.INPUT_FILE, context)
         saida = self.parameterAsOutputLayer(parameters, self.OUTPUT_RASTER, context)
-        crop_size = self.parameterAsInt(parameters, self.CROP_SIZE, context)
-        threshold = float(self.parameterAsString(parameters, self.THRESHOLD, context))
+        # crop_size = self.parameterAsInt(parameters, self.CROP_SIZE, context)
+        # threshold = float(self.parameterAsString(parameters, self.THRESHOLD, context))
 
         feedback.pushInfo("Chamando script externo para inferência...")
 
@@ -118,7 +118,8 @@ class IdentificadorCrimesFronteiras(QgsProcessingAlgorithm):
         projection = img_ds.GetProjection()
 
         height = int(height)
-        crop_size = int(crop_size)
+        # crop_size = int(crop_size)
+        crop_size = 128
 
         coords = []
         crops = []
@@ -155,7 +156,7 @@ class IdentificadorCrimesFronteiras(QgsProcessingAlgorithm):
 
         count[count == 0] = 1
         mask /= count
-        binary_mask = (mask >= threshold).astype(np.uint8)
+        binary_mask = (mask >= 0.5).astype(np.uint8)
 
         driver = gdal.GetDriverByName("GTiff")
         out_ds = driver.Create(saida, binary_mask.shape[1], binary_mask.shape[0], 1, gdal.GDT_Byte)
