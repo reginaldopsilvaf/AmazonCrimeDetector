@@ -169,7 +169,7 @@ class IdentificadorCrimesFronteiras(QgsProcessingAlgorithm):
         return {self.OUTPUT_RASTER: saida}
     
     def name(self):
-        return "Identificador de Pistas de Garimpo Ilegal na Amazônia"
+        return "Identificador de Áreas de Garimpo Ilegal na Amazônia"
 
     def displayName(self):
         return self.tr(self.name())
